@@ -17,6 +17,18 @@ class _HomeState extends State<Home> {
   List<ArticleModel> articles = List<ArticleModel>();
 
   bool _loading = true;
+  bool _darkMode = false;
+
+  ThemeData _lightTheme = ThemeData(
+      accentColor: Colors.blue,
+      primaryColor: Colors.white,
+      backgroundColor: Colors.white);
+
+  // ThemeData _darkTheme = ThemeData(
+  //   accentColor: Colors.white,
+  //   primaryColor: Colors.grey,
+  //   backgroundColor: Colors.black,
+  // );
 
   @override
   void initState() {
@@ -36,74 +48,112 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return MaterialApp(
+      title: 'Flutter news',
+      theme: _darkMode ? ThemeData.dark() : _lightTheme,
+      home: Scaffold(
+        drawer: Drawer(
+            child: ListView(
           children: [
-            Text("Flutter"),
-            Text(
-              "News",
-              style: TextStyle(
-                color: Colors.blue,
+            ListTile(
+              title: Text("Dark Mode"),
+              trailing: Switch(
+                  value: _darkMode,
+                  onChanged: (state) {
+                    setState(() {
+                      _darkMode = state;
+                    });
+                  }),
+            ),
+          ],
+        )),
+        appBar: AppBar(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Flutter"),
+              Text(
+                "News",
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            Opacity(
+              opacity: 0,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Icon(Icons.save),
               ),
             )
           ],
+          elevation: 0.0,
         ),
-        elevation: 0.0,
-      ),
-      body: _loading
-          ? Center(
-              child: Container(
-                child: CircularProgressIndicator(),
-              ),
-            )
-          : SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 6),
-                child: Column(
-                  children: [
-                    // Categories
-                    Container(
-                      height: 70,
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: categories.length,
-                          itemBuilder: (context, index) {
-                            return Tile(
-                              imageUrl: categories[index].imageUrl,
-                              categoryName: categories[index].categoryName,
-                            );
-                          }),
-                    ),
-                    // Blog
-                    Container(
-                      padding: EdgeInsets.only(top: 16, left: 10, right: 10),
-                      child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: articles.length,
-                          physics: ClampingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return BlogTile(
+        body: _loading
+            ? Center(
+                child: Container(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            : SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  child: Column(
+                    children: [
+                      // Categories
+                      Container(
+                        height: 70,
+                        padding: EdgeInsets.only(top: 6),
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            itemCount: categories.length,
+                            itemBuilder: (context, index) {
+                              return Tile(
+                                imageUrl: categories[index].imageUrl,
+                                categoryName: categories[index].categoryName,
+                                darkTheme: _darkMode,
+                              );
+                            }),
+                      ),
+                      // Blog
+                      Container(
+                        padding: EdgeInsets.only(top: 16, left: 10, right: 10),
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: articles.length,
+                            physics: ClampingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return BlogTile(
                                 imageUrl: articles[index].imageUrl,
                                 title: articles[index].title,
                                 desc: articles[index].desc,
-                                url: articles[index].url);
-                          }),
-                    )
-                  ],
+                                url: articles[index].url,
+                                darkTheme: _darkMode ? true : false,
+                              );
+                            }),
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
+      ),
     );
   }
 }
 
-class Tile extends StatelessWidget {
+class Tile extends StatefulWidget {
   final imageUrl, categoryName;
-  Tile({this.imageUrl, this.categoryName});
+  final bool darkTheme;
+  Tile({this.imageUrl, this.categoryName, this.darkTheme});
 
+  @override
+  _TileState createState() => _TileState();
+}
+
+class _TileState extends State<Tile> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -112,7 +162,8 @@ class Tile extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => CategorynNews(
-                      category: categoryName.toString().toLowerCase(),
+                      category: widget.categoryName.toString().toLowerCase(),
+                      darkTheme: widget.darkTheme,
                     )));
       },
       child: Container(
@@ -122,7 +173,7 @@ class Tile extends StatelessWidget {
             ClipRRect(
                 borderRadius: BorderRadius.circular(6),
                 child: CachedNetworkImage(
-                  imageUrl: imageUrl,
+                  imageUrl: widget.imageUrl,
                   width: 120,
                   height: 60,
                   fit: BoxFit.cover,
@@ -136,7 +187,7 @@ class Tile extends StatelessWidget {
                 color: Colors.black26,
               ),
               child: Text(
-                categoryName,
+                widget.categoryName,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14,
@@ -151,10 +202,16 @@ class Tile extends StatelessWidget {
   }
 }
 
-class BlogTile extends StatelessWidget {
+class BlogTile extends StatefulWidget {
   final String imageUrl, title, desc, url;
-  BlogTile({this.imageUrl, this.title, this.desc, this.url});
+  final bool darkTheme;
+  BlogTile({this.imageUrl, this.title, this.desc, this.url, this.darkTheme});
 
+  @override
+  _BlogTileState createState() => _BlogTileState();
+}
+
+class _BlogTileState extends State<BlogTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -164,7 +221,7 @@ class BlogTile extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ArticleView(blogUrl: url)));
+                  builder: (context) => ArticleView(blogUrl: widget.url)));
         },
         child: Card(
           elevation: 3,
@@ -172,15 +229,15 @@ class BlogTile extends StatelessWidget {
             children: [
               ClipRRect(
                   borderRadius: BorderRadius.circular(6),
-                  child: Image.network(imageUrl)),
+                  child: Image.network(widget.imageUrl)),
               Padding(
                 padding:
                     const EdgeInsets.only(top: 9, left: 9, right: 9, bottom: 4),
                 child: Text(
-                  title,
+                  widget.title,
                   style: TextStyle(
                     fontSize: 18,
-                    color: Colors.black87,
+                    color: widget.darkTheme ? Colors.white : Colors.black87,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -190,9 +247,9 @@ class BlogTile extends StatelessWidget {
                 padding:
                     const EdgeInsets.only(top: 4, left: 9, right: 9, bottom: 9),
                 child: Text(
-                  desc,
+                  widget.desc,
                   style: TextStyle(
-                    color: Colors.black54,
+                    color: widget.darkTheme ? Colors.white60 : Colors.black54,
                   ),
                 ),
               ),

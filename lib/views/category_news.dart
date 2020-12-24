@@ -5,7 +5,8 @@ import 'package:flutter_news/views/home.dart';
 
 class CategorynNews extends StatefulWidget {
   final String category;
-  CategorynNews({this.category});
+  final bool darkTheme;
+  CategorynNews({this.category, this.darkTheme});
 
   @override
   _CategorynNewsState createState() => _CategorynNewsState();
@@ -77,10 +78,12 @@ class _CategorynNewsState extends State<CategorynNews> {
                           physics: ClampingScrollPhysics(),
                           itemBuilder: (context, index) {
                             return BlogTile(
-                                imageUrl: articles[index].imageUrl,
-                                title: articles[index].title,
-                                desc: articles[index].desc,
-                                url: articles[index].url);
+                              imageUrl: articles[index].imageUrl,
+                              title: articles[index].title,
+                              desc: articles[index].desc,
+                              url: articles[index].url,
+                              darkTheme: widget.darkTheme,
+                            );
                           }),
                     )
                   ],
