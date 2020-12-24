@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
             )
           : SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 60),
+                padding: EdgeInsets.symmetric(horizontal: 6),
                 child: Column(
                   children: [
                     // Categories
@@ -79,7 +79,7 @@ class _HomeState extends State<Home> {
                     ),
                     // Blog
                     Container(
-                      padding: EdgeInsets.only(top: 16),
+                      padding: EdgeInsets.only(top: 16, left: 10, right: 10),
                       child: ListView.builder(
                           shrinkWrap: true,
                           itemCount: articles.length,
@@ -116,17 +116,17 @@ class Tile extends StatelessWidget {
                     )));
       },
       child: Container(
+        padding: EdgeInsets.only(right: 6),
         child: Stack(
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                width: 120,
-                height: 60,
-                fit: BoxFit.cover,
-              ),
-            ),
+                borderRadius: BorderRadius.circular(6),
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  width: 120,
+                  height: 60,
+                  fit: BoxFit.cover,
+                )),
             Container(
               alignment: Alignment.center,
               width: 120,
@@ -158,7 +158,7 @@ class BlogTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(bottom: 50),
+      padding: EdgeInsets.only(bottom: 25),
       child: GestureDetector(
         onTap: () {
           Navigator.push(
@@ -166,27 +166,38 @@ class BlogTile extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => ArticleView(blogUrl: url)));
         },
-        child: Column(
-          children: [
-            ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: Image.network(imageUrl)),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.black87,
-                fontWeight: FontWeight.w500,
+        child: Card(
+          elevation: 3,
+          child: Column(
+            children: [
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: Image.network(imageUrl)),
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: 9, left: 9, right: 9, bottom: 4),
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              desc,
-              style: TextStyle(
-                color: Colors.black54,
+              SizedBox(height: 8),
+              Padding(
+                padding:
+                    const EdgeInsets.only(top: 4, left: 9, right: 9, bottom: 9),
+                child: Text(
+                  desc,
+                  style: TextStyle(
+                    color: Colors.black54,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
