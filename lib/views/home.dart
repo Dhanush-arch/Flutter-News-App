@@ -24,12 +24,6 @@ class _HomeState extends State<Home> {
       primaryColor: Colors.white,
       backgroundColor: Colors.white);
 
-  // ThemeData _darkTheme = ThemeData(
-  //   accentColor: Colors.white,
-  //   primaryColor: Colors.grey,
-  //   backgroundColor: Colors.black,
-  // );
-
   @override
   void initState() {
     super.initState();
@@ -50,7 +44,10 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter news',
-      theme: _darkMode ? ThemeData.dark() : _lightTheme,
+      debugShowCheckedModeBanner: false,
+      theme: _darkMode
+          ? ThemeData(brightness: Brightness.dark, accentColor: Colors.blue)
+          : _lightTheme,
       home: Scaffold(
         drawer: Drawer(
             child: ListView(
@@ -59,6 +56,8 @@ class _HomeState extends State<Home> {
               title: Text("Dark Mode"),
               trailing: Switch(
                   value: _darkMode,
+                  activeColor: Colors.blue,
+                  activeTrackColor: Colors.lightBlue,
                   onChanged: (state) {
                     setState(() {
                       _darkMode = state;
